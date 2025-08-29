@@ -18,17 +18,6 @@ Resume analyzer AI is an AI-powered web application that helps job seekers optim
 - **Backend (Optional):** Node.js / Flask / Django (if you added backend logic)  
 - **AI Integration:** OpenAI API (or any ML/NLP model you plan to use)  
 
-### 🚀 Getting Started  
-1. Clone the repository  
-   ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
-   ```
-2. Open the project  
-   ```bash
-   Open index.html in your browser
-   ```
-   (If backend exists, run the server before opening frontend.)  
 
 ### 📌 Future Enhancements  
 - Resume keyword optimization based on ATS (Applicant Tracking Systems)  
