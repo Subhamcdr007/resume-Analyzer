@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume & Career Coach</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Libraries for reading .pdf and .docx files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="text-gray-800 antialiased">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-20 glass-card">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-2xl font-bold text-gray-900 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-violet-700 mr-2">
+                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                        <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                        <path d="m12 18-3-3 3-3"></path>
+                        <path d="M17 18h-5"></path>
+                    </svg>
+                    <span>CareerCraft AI</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12 min-h-screen">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight will-animate">
+                    Your Complete Job Application <span class="text-violet-700">Toolkit</span>
+                </h1>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto will-animate" style="animation-delay: 150ms;">
+                    Go beyond analysis. Get AI-generated cover letters, interview prep, and actionable feedback to land
+                    your next role.
+                </p>
+            </div>
+
+            <!-- Input Section -->
+            <div class="glass-card p-6 md:p-8 rounded-2xl mb-8 will-animate" style="animation-delay: 300ms;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Resume Upload -->
+                    <div>
+                        <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center"><span
+                                class="bg-violet-700 text-white rounded-full w-6 h-6 text-sm font-bold flex items-center justify-center mr-2">1</span>
+                            Upload Resume</h2>
+                        <div id="drop-zone"
+                            class="relative flex flex-col items-center justify-center w-full h-56 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50/50 hover:bg-gray-100/50 transition-colors">
+                            <div id="upload-prompt"
+                                class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V16a4 4 0 01-4 4H7z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 2v4a2 2 0 002 2h4"></path>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500 px-2"><span class="font-semibold">Click to
+                                        upload</span> or drag & drop</p>
+                                <p class="text-xs text-gray-500">PDF, DOCX, or TXT</p>
+                            </div>
+                            <div id="file-preview" class="hidden items-center justify-center text-center p-4">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <p id="file-name" class="mt-2 text-sm font-medium text-gray-700 break-all"></p>
+                                    <button id="remove-file"
+                                        class="mt-3 text-xs text-red-500 hover:text-red-700 font-semibold">Remove
+                                        File</button>
+                                </div>
+                            </div>
+                            <input id="resume-file" type="file" class="hidden" accept=".txt,.pdf,.doc,.docx" />
+                        </div>
+                        <textarea id="resume-text" class="hidden"></textarea>
+                    </div>
+
+                    <!-- Job Description Input -->
+                    <div>
+                        <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center"><span
+                                class="bg-violet-700 text-white rounded-full w-6 h-6 text-sm font-bold flex items-center justify-center mr-2">2</span>
+                            Paste Job Description</h2>
+                        <textarea id="job-description"
+                            class="w-full h-56 p-4 border border-gray-300 rounded-lg shadow-inner bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                            placeholder="Paste the full job description here... (Optional, but highly recommended for best results)"></textarea>
+                    </div>
+                </div>
+                <!-- Analysis Button -->
+                <div class="mt-8 text-center">
+                    <button id="analyze-button"
+                        class="bg-violet-700 text-white font-bold py-3 px-10 rounded-lg shadow-lg hover:bg-violet-800 transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-violet-300">
+                        <span id="button-text">Analyze My Resume</span>
+                        <div id="loading-spinner"
+                            class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="hidden">
+                <!-- Skeleton Loader -->
+                <div id="skeleton-loader" class="glass-card p-6 md:p-8 rounded-2xl animate-pulse hidden">
+                    <div class="h-8 bg-gray-300 rounded w-1/2 mb-6"></div>
+                    <div class="flex space-x-4 mb-8 overflow-x-auto">
+                        <div class="h-6 bg-gray-300 rounded w-24"></div>
+                        <div class="h-6 bg-gray-200 rounded w-24"></div>
+                        <div class="h-6 bg-gray-200 rounded w-24"></div>
+                        <div class="h-6 bg-gray-200 rounded w-24"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <div class="h-40 bg-gray-200 rounded-lg"></div>
+                        </div>
+                        <div>
+                            <div class="h-40 bg-gray-200 rounded-lg"></div>
+                        </div>
+                    </div>
+                    <div class="mt-8 space-y-4">
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                    </div>
+                </div>
+
+                <!-- Actual Results -->
+                <div id="results-content" class="glass-card p-6 md:p-8 rounded-2xl hidden">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
+                        <h2 class="text-3xl font-extrabold text-gray-800 mb-4 sm:mb-0">Analysis Complete</h2>
+                        <button id="generate-cover-letter-btn"
+                            class="hidden items-center justify-center gap-2 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M12 22a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4Z">
+                                </path>
+                                <path d="M12 18h.01"></path>
+                                <path d="M18 22h-2a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2Z">
+                                </path>
+                                <path d="M18 18h.01"></path>
+                                <path d="M6 18h.01"></path>
+                            </svg>
+                            <span>Generate Cover Letter</span>
+                        </button>
+                    </div>
+                    <!-- Tabs -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="-mb-px flex space-x-6 md:space-x-8 overflow-x-auto" aria-label="Tabs">
+                            <button class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                                data-tab="job-match">Job Match</button>
+                            <button
+                                class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                data-tab="ats-check">ATS Check</button>
+                            <button
+                                class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                data-tab="improvements">Improvements</button>
+                            <button
+                                class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                data-tab="interview-prep">Interview Prep</button>
+                        </nav>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div id="tab-content">
+                        <!-- Job Match -->
+                        <div id="job-match-content" class="tab-panel">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="flex flex-col items-center justify-center bg-white/50 p-6 rounded-lg">
+                                    <h3 class="font-semibold text-lg mb-4">Job Match Score</h3>
+                                    <div class="relative w-40 h-40">
+                                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                                            <circle class="text-gray-200" stroke-width="10" stroke="currentColor"
+                                                fill="transparent" r="45" cx="50" cy="50" />
+                                            <circle id="match-progress-circle"
+                                                class="text-green-500 progress-ring__circle" stroke-width="10"
+                                                stroke-linecap="round" stroke="currentColor" fill="transparent" r="45"
+                                                cx="50" cy="50" />
+                                        </svg>
+                                        <span id="match-score"
+                                            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-gray-800">0%</span>
+                                    </div>
+                                    <p id="match-feedback" class="mt-4 text-center text-gray-600"></p>
+                                </div>
+                                <div class="bg-white/50 p-6 rounded-lg">
+                                    <h3 class="font-semibold text-lg mb-4">Missing Keywords</h3>
+                                    <p class="text-sm text-gray-500 mb-4">Consider adding these skills from the job
+                                        description to your resume.</p>
+                                    <div id="missing-keywords" class="flex flex-wrap gap-2"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ATS Check -->
+                        <div id="ats-check-content" class="tab-panel hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="flex flex-col items-center justify-center bg-white/50 p-6 rounded-lg">
+                                    <h3 class="font-semibold text-lg mb-4">ATS Friendliness</h3>
+                                    <div class="relative w-40 h-40">
+                                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                                            <circle class="text-gray-200" stroke-width="10" stroke="currentColor"
+                                                fill="transparent" r="45" cx="50" cy="50" />
+                                            <circle id="ats-progress-circle" class="text-blue-500 progress-ring__circle"
+                                                stroke-width="10" stroke-linecap="round" stroke="currentColor"
+                                                fill="transparent" r="45" cx="50" cy="50" />
+                                        </svg>
+                                        <span id="ats-score"
+                                            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-gray-800">0%</span>
+                                    </div>
+                                    <p id="ats-feedback" class="mt-4 text-center text-gray-600"></p>
+                                </div>
+                                <div class="bg-white/50 p-6 rounded-lg">
+                                    <h3 class="font-semibold text-lg mb-4">Key Action Verbs</h3>
+                                    <p class="text-sm text-gray-500 mb-4">Your resume includes these strong action
+                                        verbs. Great job!</p>
+                                    <div id="action-verbs" class="flex flex-wrap gap-2"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Improvements -->
+                        <div id="improvements-content" class="tab-panel hidden bg-white/50 p-6 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-4">Actionable Suggestions</h3>
+                            <ul id="suggestions-list" class="space-y-4 text-gray-700"></ul>
+                            <div id="quantify-section" class="mt-8">
+                                <h3 class="font-semibold text-lg mb-4">Quantify Your Achievements</h3>
+                                <p class="text-sm text-gray-500 mb-4">Turn responsibilities into measurable results to
+                                    show your impact.</p>
+                                <div id="quantify-list" class="space-y-4"></div>
+                            </div>
+                        </div>
+
+                        <!-- Interview Prep -->
+                        <div id="interview-prep-content" class="tab-panel hidden bg-white/50 p-6 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-4">Personalized Interview Questions</h3>
+                            <p class="text-sm text-gray-500 mb-4">Prepare for your interview by practicing these
+                                questions based on your resume and the job description.</p>
+                            <ul id="interview-questions-list" class="space-y-4 text-gray-700"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cover Letter Section -->
+                <div id="cover-letter-section" class="hidden mt-8 glass-card p-6 md:p-8 rounded-2xl">
+                    <div id="cover-letter-loader" class="animate-pulse hidden">
+                        <div class="h-6 bg-gray-300 rounded w-1/3 mb-6"></div>
+                        <div class="space-y-3">
+                            <div class="h-4 bg-gray-200 rounded w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                            <div class="h-4 bg-gray-200 rounded w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                        </div>
+                    </div>
+                    <div id="cover-letter-content" class="hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">AI-Generated Cover Letter</h2>
+                            <button id="copy-cover-letter-btn"
+                                class="flex items-center gap-2 bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                                </svg>
+                                <span id="copy-btn-text">Copy Text</span>
+                            </button>
+                        </div>
+                        <div id="cover-letter-output"
+                            class="bg-white/60 p-6 rounded-lg text-gray-700 font-mono text-sm leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="alert-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 h-full w-full z-50 hidden items-center justify-center p-4">
+        <div class="relative mx-auto p-6 border w-full max-w-md rounded-2xl glass-card">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900">Error</h3>
+                <p id="modal-message" class="text-sm text-gray-600 mt-2"></p>
+                <button id="close-modal-btn"
+                    class="mt-6 px-6 py-2 bg-violet-700 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+
+</html>
